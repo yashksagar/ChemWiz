@@ -1,0 +1,526 @@
+<!doctype HTML>
+
+<html>
+
+<head>
+
+   <script src="./d3.v2.js"> </script>
+  
+   <link rel="stylesheet" href="./jquery-ui.css" />
+   <script src="./jquery.v1.8.3.js"></script>
+   <script src="./jquery-ui.js"></script>
+  
+    <script>
+	$(function() {
+        $( document ).tooltip();
+    });
+    </script>
+	
+  
+  <style>
+  
+	
+	#display{
+	  position: absolute;
+	  left: 100px;
+	  font-weight: bold;
+	  color: white;
+	}
+	
+	.text{
+	  color: white;
+	  font-family:"Georgia", Times, serif;
+	  padding: 2px;
+	}
+
+	.property{
+	 background-color: gray;
+	 height: 40%;
+	 width: 22% ;
+	 padding: 15px;
+	 position: absolute;
+	 top: 150px;
+	 z-index: 0;
+	 
+	}
+
+	.sb{
+	position: absolute;
+	z-index: 1;
+	width: 30%;
+	top:100px;
+	left: 300px;
+	}
+	
+	#legend{
+	  position: relative;
+	  top: 100px;
+	  right: 20px;
+	  z-index: -1;
+	  width: 25%;
+	 
+	  
+	}
+	
+	#header{
+	  position: absolute;
+	  width: 100%;
+	  height: 10%;
+	}
+  
+  </style>
+  
+
+</head>
+<body background="bg_linen.jpg">
+
+<a href="../UI/UI.html"><img id="header" class="header" src="./header.jpg"/></a>
+
+
+	<div class="property">
+
+		<span >
+
+		  <label><input type="radio" name="property" value="bp" id="boilingpoint" class="radiob" > <span class="text">Boiling Point </span></label>
+		  <label><input type="radio" name="property" value="mp" id="meltingpoint" class="radiob" > <span class="text">Melting Point </span></label>
+
+		</span>
+
+		    <span >
+		   
+			 <div id="slider">
+		  
+				<span class="text">0 °C</span> <input type="range" id="slide" min="0" max="1500" step="50" value="100" onchange = "updateSlider(this.value)"
+				 /> <span class="text"> 1500 °C</span>
+			  
+			   
+		  
+			 </div>
+		   
+		  
+		      <div id="display" class="text">
+		  
+			 
+		      </div>
+
+		    </span>
+		 
+		 
+		 
+	
+
+		<br> </br>
+		<div> </div>
+
+		 <p id="nameinfo" class="text">
+		 
+		 Name: 
+		 </p>
+		 <p id="mpinfo" class="text">Melting Point:
+		 </p>
+		 
+		 <p id="bpinfo" class="text">Boiling Point:
+         </p>
+		 
+		
+
+		 <div id="details" class="text">
+		 Chemical Formula:
+		 <br>
+		 Flash Point: 
+		 
+		 </div>
+		 
+		 
+		 
+		 
+	</div>
+  <div id="legend">
+				  	  
+		 </div>
+		   
+  	
+	<div id="sunburst" class="sb"> 
+	 </div>
+	
+	
+<script>
+var dataslide;
+var slider = 0;
+var flag1 = 0; // highlight mp
+var flag2 = 0;  // highlight bp
+
+ var width = 1260;
+  height = 600,
+      radius = Math.min(1260,600) / 3.5,
+	  
+      color = d3.scale.category20c();
+  var value;
+    radius+=80;
+ var vis = d3.select("#sunburst").append("svg:svg")
+     .attr("class","svg")
+     .attr("width", width)
+     .attr("height", height)
+   .append("svg:g")
+     .attr("transform", "translate(" + ((width-400) / 2) + "," + ((height-90) / 2) + ")");
+ 
+
+   
+		 var partition = d3.layout.partition()
+			 .sort(null)
+			 .size([2*Math.PI, radius * radius])
+			 .value(  function(d) {return 1;  });
+		 
+
+		 var arc = d3.svg.arc()
+			 .startAngle(function(d) { return d.x; })
+			.endAngle(function(d) { return d.x + d.dx; })
+			 .innerRadius(function(d) { return Math.sqrt(d.y); })
+			 .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+		 
+		 d3.json("./testData2.json", function(json) {
+		 
+			var path = vis.data([json]).selectAll("path")
+			   .data(partition.nodes)
+			   .enter().append("path")
+			   .attr("display", function(d) { return d.depth ? null : "none"; }) // hide inner ring, to form a donut shape
+			   .attr("d", arc)
+			   .attr("fill-rule", "evenodd")
+			   .style("stroke", "#fff")
+			   .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+			  
+			   .on("mouseover", function(d){ 
+						 d3.select(this).style("fill","#7f7f7f");
+											 
+						// d3.select(this).append("a").attr("href","#").attr("title","hello!!");
+
+						d3.select(this).attr("title",function(d){ return d.children ? d.name : null ;});
+						// d3.select(this).tooltip({content:"hello!"});
+						 
+						 if(!d.children){
+								 if(flag1===1){
+								 d3.select("#mpinfo").style("font-style","oblique");
+								 d3.select("#mpinfo").style("font-weight","bold");
+								 }
+								 else if(flag2===1){
+								 d3.select("#bpinfo").style("font-style","oblique");
+								 d3.select("#bpinfo").style("font-weight","bold");
+								 }
+								 
+								 d3.select("#nameinfo").html("Name:    <b> "+d.name +"</b>");
+														d3.select("#mpinfo").html("Melting Point:    <b>"+d.meltingpoint+"</b> °C");
+														 d3.select("#bpinfo").html("Boiling Point:    <b>"+d.boilingpoint+"</b> °C");
+														 
+								d3.select("#details").html("Chemical Formula: <b>"+d.chemformula+ "</b> <br>"+"Flash Point: <b>"+d.flashpoint+" </b> "+ (d.flashpoint=="Inflammable" ? "" : "°C"));
+								
+						} 		
+				   })
+				.on("mouseout", function(d){ 
+						 d3.select(this).style("fill",function(d) { return color((d.children ? d : d.parent).name); });
+			             d3.select("#nameinfo").html("Name: ");
+						
+						 if(flag1===1)
+						 { 
+						 d3.select("#mpinfo").style("font-style","normal");
+						 d3.select("#mpinfo").style("font-weight","normal");
+						 }
+						 
+						 if(flag2===1){ 
+						 d3.select("#bpinfo").style("font-style","normal");
+						 d3.select("#bpinfo").style("font-weight","normal"); 
+						 }
+  						 
+						 d3.select("#mpinfo").html("Melting Point: ");
+						 d3.select("#bpinfo").html("Boiling Point: ");
+						 
+						 d3.select("#details").html("Chemical Formula: <br>Flash Point: ");
+						 
+						
+				   })   
+			      
+			   .each(stash);
+			   
+						
+			
+			/*	var leg = d3.select("#legend").append("svg")
+									 .attr("width", width)
+									 .attr("height", 100)
+								   .append("g")
+								//.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");					   
+
+							 var legend = leg.selectAll(".legend")
+								  .data()
+								.enter().append("g")
+								  .attr("class", "legend")
+								  .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+							  legend.append("rect")
+								  .attr("x", width - 20)
+								  .attr("width", 38)
+								  .attr("height", 18)
+								  .style("fill", color);//function(d){return color((d.children ? d : d.parent).name);});
+
+							  legend.append("text")
+								  .attr("x", width - 24)
+								  .attr("y", 9)
+								  .attr("dy", ".5em")
+								  .style("text-anchor", "end")
+								  .text(function(d) { return d.name; });  
+								  
+				*/
+
+				var leg = d3.select("#legend").append("svg")
+									 .attr("width", width)
+									 .attr("height", 210)
+								   .append("g")
+								    .append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 10)
+								        .attr("width", 38)
+								        .attr("height", 18)
+										.style("fill", "#6baed6");   // Compounds
+										
+								d3.select("svg").append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 30)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#74c476");   // Bases
+							   
+							   d3.select("svg").append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 50)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#9ecae1");  // Acids
+										
+								d3.select("svg").append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 70)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#c6dbef"); // Salts
+										
+								d3.select("svg").append("rect")
+									    .attr("x", width+40 - 200)
+										.attr("y", 90)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#e6550d");   // Chlorides
+
+								d3.select("svg").append("rect")
+									    .attr("x", width+40 - 200)
+										.attr("y", 110)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#fd8d3c");	 // Sulfates	
+
+								d3.select("svg").append("rect")
+									    .attr("x", width+40 - 200)
+										.attr("y", 130)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#fdae6b");	 // Nitrates
+										
+								d3.select("svg").append("rect")
+									    .attr("x", width+40 - 200)
+										.attr("y", 150)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#fdd0a2");	 // Carbonates	
+
+								d3.select("svg").append("rect")
+										.attr("x", width+40 - 200)
+										.attr("y", 170)
+										.attr("width", 38)
+										.attr("height", 18)
+										.style("fill", "#31a354");	 // Nitrites
+										
+								d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 10)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Compounds"); 
+										
+						   	d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 30)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Bases"); 
+										
+						   	d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 50)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Acids"); 
+										
+																			
+										
+										
+						   	d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 70)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Salts"); 
+										
+										
+										d3.select("svg").append("text")
+										.attr("x", width-47)
+										.attr("y", 90)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Chlorides"); 
+										
+										d3.select("svg").append("text")
+										.attr("x", width-58)
+										.attr("y", 110)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Sulfates"); 
+										
+										d3.select("svg").append("text")
+										.attr("x", width-55)
+										.attr("y", 130)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Nitrates"); 
+										
+										d3.select("svg").append("text")
+										.attr("x", width-75)
+										.attr("y", 150)
+										.attr("dy", ".9em")
+										.style("text-anchor", "middle")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Carbonates"); 
+										
+										d3.select("svg").append("text")
+										.attr("x", width-60)
+										.attr("y", 170)
+										.attr("dy", ".9em")
+										.style("text-anchor", "end")
+										.style("fill","white")
+										.style("font-family", "Georgia")
+										.text("Nitrites"); 
+						   
+							   
+	     
+		/*              Get this to work!
+
+			   function processSlider(d){
+					 alert(d3.select('#slide').property("value"));
+			
+			d.forEach(function (d){
+			  if(d.meltingpoint > d3.select('#slide').property("value") ){
+			   dataslide.concat(d.meltingpoint);
+			  }}
+			
+			);
+			return dataslide;
+		 }
+		*/	  
+		
+			
+            d3.selectAll("input").on("change", function change(d){
+		   
+		   flag1=0;
+		   flag2=0;
+		   
+		   var value;
+		   
+		   if(d3.select('#meltingpoint').property("checked")){
+				value = function(d) { return (d.meltingpoint>d3.select('#slide').property("value") ? d.meltingpoint : 0);
+												
+			      }
+				flag1=1;  
+			}
+			else if(d3.select('#boilingpoint').property("checked")){
+				value = function(d) { return (d.boilingpoint>d3.select('#slide').property("value") ? d.boilingpoint : 0); }
+				flag2=1;
+			}
+			else
+			{
+				alert('select a property!');
+				value = 1;
+			}
+					   
+
+
+			 path.data(partition.value(value).nodes)
+						  .transition()
+						  .duration(1500)
+						  .attrTween("d", arcTween);
+			
+     });
+  
+  
+  
+ 
+});
+			  
+  
+// Stash the old values for transition.
+ function stash(d) {
+   d.x0 = d.x;
+   d.dx0 = d.dx;
+ }
+ 
+ // Interpolate the arcs in data space.
+ function arcTween(a) {
+   var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+   return function(t) {
+     var b = i(t);
+     a.x0 = b.x;
+     a.dx0 = b.dx;
+     return arc(b);
+   };
+ }
+ 
+ 
+ 
+ </script>
+ 
+ 
+ <script type="text/javascript">
+
+window.onload = (function(){
+
+ var slideAmount = document.getElementById('slide').value;
+ 
+ updateSlider(slideAmount);
+
+}); 
+ function updateSlider(slideAmount){
+	
+	var disp = document.getElementById('display');
+	
+	disp.innerHTML = slideAmount+" °C";
+ 
+     
+ }
+
+</script>
+
+
+ 
+  
+ </body>
+ </html>

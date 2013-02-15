@@ -1,0 +1,147 @@
+<html>
+
+
+<style>
+
+#draggable1 {
+
+position: absolute;
+  left: 10px;
+  top: 100px;
+	
+}
+
+#draggable2 {
+
+position: absolute;
+  left: 405px;
+  top: 100px;
+	
+}
+
+#draggable3 {
+
+position: absolute;
+  left: 800px;
+  top: 360px;
+	
+}
+
+#draggable4 {
+
+position: absolute;
+  left: 800px;
+  top: 100px;
+	
+}
+
+#draggable5 {
+
+position: absolute;
+  left: 405px;
+  top: 360px;
+	
+}
+
+#draggable6 {
+
+position: absolute;
+  left: 10px;
+  top: 360px;
+	
+}
+
+#reset{
+
+ position: absolute;
+ bottom: 20px;
+ right: 15px;
+
+}
+
+
+#header{
+position: relative;
+width: 100%;
+height: 10%;
+
+}
+
+#draggable1,#draggable2,#draggable3,#draggable4, #draggable5, #draggable6 
+			{ width: 400px; height: 260px; padding: 0.5em; }
+</style>
+
+<head>
+<link rel="stylesheet" href="./jquery-ui.css" />
+		<script src="./jquery.v1.8.3.js"></script>
+		<script src="./jquery-ui.js"></script>
+        <script>
+		
+		$(function() {
+			$( "#draggable1" ).draggable();$( "#draggable1" ).resizable();
+			$( "#draggable2" ).draggable();$( "#draggable2" ).resizable();
+			$( "#draggable3" ).draggable();$( "#draggable3" ).resizable();
+			$( "#draggable4" ).draggable();$( "#draggable4" ).resizable();
+			$( "#draggable5" ).draggable();$( "#draggable5" ).resizable();
+			$( "#draggable6" ).draggable();$( "#draggable6" ).resizable();
+		
+           $('#reset').click(function(){
+		   
+		    window.location = "./Trellis.html";
+		});   
+		   
+		
+		});
+		
+	    function size() {
+		
+		 var i = 1;
+		 var w,h;
+				 
+		  for(i=1;i<=6;i++){
+		  
+		    w = $( "#draggable"+i ).width();
+			h = $( "#draggable"+i ).height();		
+				
+			$("#draggable"+i).children('a').children('img').attr("width",w);		
+			$("#draggable"+i).children('a').children('img').attr("height",h);		
+		  }
+		}
+		
+	
+		</script>
+        
+</head>
+
+<body background="bg_linen.jpg">
+
+
+<a href="../UI/UI.html"><img id="header" class="header" src="./header.jpg"/></a>
+
+
+<div id="draggable1"  onmouseover="size();">
+<a href="BP/bp.html" ><img src="BoilP.jpg" width="400" height="260" alt="Phase Diagram" id="image1" > </a>
+</div>
+<div id="draggable2"  onmouseover="size();">
+<a href="BP/mp.html" ><img src="MeltP.jpg" width="400" height="260" alt="Phase Diagram" id="image2" > </a>
+</div>
+<div id="draggable3"  onmouseover="size();">
+<a href="BP/flasp.html" ><img src="FlashP.jpg" width="400" height="260" alt="Phase Diagram" id="image3" > </a>
+</div>
+<div id="draggable4"  onmouseover="size();">
+<a href="BP/freep.html" ><img src="FreeP.jpg" width="400" height="260" alt="Phase Diagram" id="image4" > </a>
+</div>
+<div id="draggable5"  onmouseover="size();">
+<a href="BP/sol.html" ><img src="Solu.jpg" width="400" height="260" alt="Phase Diagram" id="image5" > </a>
+</div>
+<div id="draggable6"  onmouseover="size();">
+<a href="BP/tox.html" ><img src="Toxi.jpg" width="400" height="260" alt="Phase Diagram" id="image6" > </a>
+
+</div>
+
+
+<button id="reset"> Reset </button>
+
+</body>
+
+</html>

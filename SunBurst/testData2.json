@@ -1,0 +1,124 @@
+{
+ "name": "root",
+ 
+ "children": [
+  {
+   "name": "Compounds",
+   "children": [
+    
+	{
+      "name": "Acids",
+      "children": [
+	   {"name": "Hydrochloric Acid", "meltingpoint": -18, "boilingpoint": 103, "chemformula": "HCl" , "flashpoint": "Inflammable"},
+       {"name": "Sulfuric Acid", "meltingpoint": 10, "boilingpoint": 337, "chemformula": "H2SO4" ,"flashpoint": "Inflammable"},
+	   {"name": "Carbonic Acid", "meltingpoint": 210, "boilingpoint": 182, "chemformula": "H2CO3" ,"flashpoint": "Inflammable"},
+	   {"name": "Hydrobromic Acid", "meltingpoint": -11, "boilingpoint": 122, "chemformula": "HBr" ,"flashpoint": "Inflammable"},
+	   {"name": "Hydroflouric Acid", "meltingpoint": -84, "boilingpoint": 19, "chemformula": "HF" ,"flashpoint": "Inflammable"},
+	   {"name": "Formic Acid", "meltingpoint": 9, "boilingpoint": 101, "chemformula": "HCOOH" ,"flashpoint": 69},
+	   {"name": "Acetic Acid", "meltingpoint": 16, "boilingpoint": 118, "chemformula": "CH3COOH" ,"flashpoint": 40},
+	   {"name": "Carbolic Acid", "meltingpoint": 41, "boilingpoint": 182, "chemformula": "C6H5OH" ,"flashpoint": 79},
+	   {"name": "Tartaric Acid", "meltingpoint": 172, "boilingpoint": 210, "chemformula": "C4H6O6" ,"flashpoint": 210},
+	   {"name": "Oxalic Acid", "meltingpoint": 190, "boilingpoint": 155, "chemformula": "(COOH)2" , "flashpoint": 166},
+	   {"name": "Boric Acid", "meltingpoint": 171, "boilingpoint": 300, "chemformula": "H3BO4" , "flashpoint": "Inflammable"},
+	   {"name": "Phosphoric Acid", "meltingpoint": 42, "boilingpoint": 158, "chemformula": "H3PO4" ,"flashpoint": "Inflammable"},
+	   {"name": "Lactic Acid", "meltingpoint": 53, "boilingpoint": 122, "chemformula": "C3H6O3" ,"flashpoint": "Inflammable"},
+	   {"name": "Citric Acid", "meltingpoint": 153, "boilingpoint": 175, "chemformula": "C6H8O7" ,"flashpoint": 100}  
+      ]}
+	,
+     {
+     "name": "Salts",
+     "children": [
+	 
+	 {
+	 
+		  "name": "Chlorides",
+		  "children": [
+		  
+		  {"name": "Sodium Chloride", "meltingpoint": 801, "boilingpoint": 1413, "chemformula": "NaCl" ,"flashpoint": "Inflammable"},
+		  {"name": "Ammonium Chloride", "meltingpoint": 340, "boilingpoint": 520, "chemformula": "NH4Cl" ,"flashpoint": "Inflammable"},
+		  {"name": "Potassium Chloride", "meltingpoint": 770, "boilingpoint": 1420, "chemformula": "KCl" ,"flashpoint": "Inflammable"},
+		  {"name": "Calcium Chloride", "meltingpoint": 780, "boilingpoint": 1600, "chemformula": "CaCl2" ,"flashpoint": "Inflammable"},
+		  {"name": "Lithium Chloride", "meltingpoint": 605, "boilingpoint": 1380, "chemformula": "LiCl" ,"flashpoint": "Inflammable"},
+		  {"name": "Silver Chloride", "meltingpoint": 455, "boilingpoint": 1550, "chemformula": "AgCl" ,"flashpoint": "Inflammable"},
+		  {"name": "Aluminium Chloride", "meltingpoint": 190, "boilingpoint": 0, "chemformula": "AlCl3" ,"flashpoint": "Inflammable"},
+		  {"name": "Benzyl Chloride", "meltingpoint": -43, "boilingpoint": 179, "chemformula": "C6H5CH2Cl" ,"flashpoint": 73},
+		  {"name": "Antimony Chloride", "meltingpoint": 73, "boilingpoint": 220, "chemformula": "SbCl3" ,"flashpoint": "Inflammable"},
+		  {"name": "Methyl Chloride", "meltingpoint": -97, "boilingpoint": -24, "chemformula": "CH3Cl" ,"flashpoint": -20},
+		  {"name": "Ethyl Chloride", "meltingpoint": -139, "boilingpoint": 12, "chemformula": "C2H5Cl" ,"flashpoint": -50}
+		  ]},
+		  {
+		  "name": "Sulfates",
+		  "children": [
+		  {"name": "Sodium Sulfate", "meltingpoint": 884, "boilingpoint": 1429, "chemformula": "Na2SO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Calcium Sulfate", "meltingpoint": 450, "boilingpoint": 1193, "chemformula": "CaSO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Lithium Sulfate", "meltingpoint": 859, "boilingpoint": 1377, "chemformula": "Li2SO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Silver Sulfate", "meltingpoint": 657, "boilingpoint": 1085, "chemformula": "Ag2SO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Magnesium Sulfate", "meltingpoint": 1124, "boilingpoint": 0, "chemformula": "MgSO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Potassium Sulfate", "meltingpoint": 1069, "boilingpoint": 1689, "chemformula": "K2SO4" ,"flashpoint": "Inflammable"},
+		  {"name": "Dimethyl Sulfate", "meltingpoint": -32, "boilingpoint": 188, "chemformula": "(CH3O)2SO4","flashpoint": 83}		  
+		  
+		  ]},
+		{
+		  "name": "Nitrates",
+		  "children": [
+			  
+		  {"name": "Sodium Nitrate", "meltingpoint": 308, "boilingpoint": 380, "chemformula": "NaNO3" ,"flashpoint": "Inflammable"},	  
+		   {"name": "Potassium Nitrate", "meltingpoint": 334, "boilingpoint": 537, "chemformula": "KNO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Lithium Nitrate", "meltingpoint": 260, "boilingpoint": 600, "chemformula": "LiNO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Calcium Nitrate", "meltingpoint": 43, "boilingpoint": 132, "chemformula": "Ca(NO3)2" ,"flashpoint": "Inflammable"},
+		  {"name": "Aluminium Nitrate", "meltingpoint": 73, "boilingpoint": 135, "chemformula": "Al(NO3)2" ,"flashpoint": "Inflammable"},
+		  {"name": "Magnesium Nitrate", "meltingpoint": 89, "boilingpoint": 339, "chemformula": "Mg(NO3)2" ,"flashpoint": "Inflammable"},
+		  {"name": "Silver Nitrate", "meltingpoint": 212, "boilingpoint": 444, "chemformula": "AgNO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Methyl Nitrate", "meltingpoint":-108, "boilingpoint": 65, "chemformula": "CH3NO3" ,"flashpoint": "Inflammable"}
+		  ]},
+		  
+		  {"name": "Carbonates",
+		  "children": [
+		  {"name": "Sodium Carbonate", "meltingpoint": 755, "boilingpoint": 1390, "chemformula": "Na2CO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Sodium Bicarbonate", "meltingpoint": 50, "boilingpoint": 851, "chemformula": "NaHCO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Potassium Carbonate", "meltingpoint": 891, "boilingpoint": 891, "chemformula": "K2CO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Potassium Bicarbonate", "meltingpoint": 120, "boilingpoint": 120, "chemformula": "KHCO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Calcium Carbonate", "meltingpoint": 800, "boilingpoint": 899, "chemformula": "CaCO3" ,"flashpoint": 825},
+		  {"name": "Magnesium Carbonate", "meltingpoint": 540, "boilingpoint": 0, "chemformula": "MgCO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Dimethyl Carbonate", "meltingpoint": 4, "boilingpoint": 90, "chemformula": "C3H6O3" ,"flashpoint": 16},
+		  {"name": "Silver Carbonate", "meltingpoint": 218, "boilingpoint": 0, "chemformula": "Ag2CO3" ,"flashpoint": "Inflammable"},
+		  {"name": "Lithium Carbonate", "meltingpoint": 723, "boilingpoint": 1310, "chemformula": "Li2CO3" ,"flashpoint": "Inflammable"}	  
+		   ]},
+		   
+		   {"name": "Nitrites",
+		  "children": [
+		  {"name": "Sodium Nitrite", "meltingpoint": 271, "boilingpoint": 320, "chemformula": "NaNO2" ,"flashpoint": "Inflammable"},
+		  {"name": "Calcium Nitrite", "meltingpoint": 561, "boilingpoint": 0, "chemformula": "Ca(NO2)2" ,"flashpoint": "Inflammable"},
+		  {"name": "Ammonium Nitrite", "meltingpoint": 170, "boilingpoint": 0, "chemformula": "NH4NO2" ,"flashpoint": 60},
+		  {"name": "Lithium Nitrite", "meltingpoint": 222, "boilingpoint": 0, "chemformula": "LiNO2" ,"flashpoint": "Inflammable"},
+		  {"name": "Methyl Nitrite", "meltingpoint": -16, "boilingpoint": -12, "chemformula": "CH3NO2" ,"flashpoint": "Inflammable"},
+		  {"name": "Ethyl Nitrite", "meltingpoint": 0, "boilingpoint": 17, "chemformula": "C2H5NO2" ,"flashpoint": "Inflammable"},
+		  {"name": "Potassium Nitrite", "meltingpoint": 440, "boilingpoint": 537, "chemformula": "KNO2" ,"flashpoint": "Inflammable"}
+		  ]}
+	    
+	 ]}
+	 
+	 ,
+     {
+       "name": "Bases",
+       "children": [
+       {"name": "Sodium Hydroxide", "meltingpoint": 318, "boilingpoint": 1388, "chemformula": "NaOH" ,"flashpoint": "Inflammable"},
+       {"name": "Calcium Hydroxide", "meltingpoint": 580, "boilingpoint": 0, "chemformula": "Ca(OH)2" ,"flashpoint": "Inflammable"},
+       {"name": "Lithium Hydroxide", "meltingpoint": 462, "boilingpoint": 924 , "chemformula": "LiOH" ,"flashpoint": "Inflammable"},
+       {"name": "Potassium Hydroxide", "meltingpoint": 406, "boilingpoint": 1327, "chemformula": "KOH" ,"flashpoint": "Inflammable"},
+       {"name": "Iron(II) Hydroxide", "meltingpoint": 1000, "boilingpoint": 0, "chemformula": "Fe(OH)2" ,"flashpoint": "Inflammable"},
+	   {"name": "Methyl Hydroxide", "meltingpoint": -98, "boilingpoint": 65, "chemformula": "CH3OH" ,"flashpoint": 11},
+	   {"name": "Ethyl Hydroxide", "meltingpoint": -114, "boilingpoint": 79, "chemformula": "C2H5OH" ,"flashpoint": 13},
+	   {"name": "Barium Hydroxide", "meltingpoint": 78, "boilingpoint": 780, "chemformula": "Ba(OH)2" ,"flashpoint": "Inflammable"},
+	   {"name": "Strontium Hydroxide", "meltingpoint": 375, "boilingpoint": 710, "chemformula": "Sr(OH)2" ,"flashpoint": "Inflammable"},
+	   {"name": "Rubidium Hydroxide", "meltingpoint": 301, "boilingpoint": 1390, "chemformula": "RbOH" ,"flashpoint": "Inflammable"},
+	   {"name": "Caesium Hydroxide", "meltingpoint": 342, "boilingpoint": 380, "chemformula": "CsOH" ,"flashpoint": "Inflammable"},
+	   {"name": "Ammonium Hydroxide", "meltingpoint": -60, "boilingpoint": 35, "chemformula": "NH4OH" ,"flashpoint": "Inflammable"}
+      ]}
+     ]
+   }
+ ]
+}
+ 
+  
+  

@@ -1,0 +1,348 @@
+<!-- 
+
+#1 ->  Acids
+#2 ->  Bases
+#3 ->  Chlorides
+#4 ->  Nitrates and Nitrites
+#5 ->  Carbonates and Bicarbonates
+#6 ->  Sulfates
+
+toxicity:
+	high - orange
+	mid - green
+	low - blue
+-->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CineChem</title>
+<style>
+
+
+#chart {
+
+ position: absolute;
+ top: 50px;
+  margin-left: -40px;
+  height: 506px;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.label {
+  fill: #777;
+}
+
+.year.label {
+  font: 500 48px "Helvetica Neue";
+  fill: #ddd;
+}
+
+.year.label.active {
+  fill: #aaa;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  cursor: ew-resize;
+}
+
+	#legend{
+	  position: relative;
+	  z-index: -1;
+	  width: 100%;
+	  top: 150px;
+	  right: -150px;
+	 
+	  
+	}
+	
+#header{
+
+  position: absolute;
+  height: 10%;
+  width: 100%;
+}	
+
+</style>
+
+<a href="../UI/UI.html"><img id="header" class="header" src="./header.jpg"/></a>
+
+  <div id="legend">
+				  	  
+  </div>
+
+<p id="chart"></p>
+
+
+
+
+<script src="./d3.v2.js"></script>
+<script>
+
+// Various accessors that specify the four dimensions of data to visualize.
+function x(d) { return d.boilingpoint; }
+function y(d) { return d.solubility; }
+function radius(d) { return d.meltingpoint; }
+function color(d) { return d.toxicity; }
+function key(d) { return d.name; }
+
+// Chart dimensions.
+var margin = {top: 19.5, right: 19.5, bottom: 40, left: 69.5},
+    width = 960 - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// Various scales. These domains make assumptions of data, naturally.
+var xScale = d3.scale.linear().domain([-500, 4000]).range([0, width]),
+    yScale = d3.scale.linear().domain([0, 9999]).range([height-50, 0]),
+    radiusScale = d3.scale.linear().domain([100, 1900]).range([0, 40]),
+    colorScale = d3.scale.category10();
+
+// The x & y axes.
+var xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(12, d3.format(",d")),
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// Create the SVG container and set the origin.
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right
+	)
+    .attr("height", height - 50 + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Add the x-axis.
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + (height-50) + ")")
+    .call(xAxis);
+
+// Add the y-axis.
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+// Add an x-axis label.
+svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width)
+    .attr("y", height - 56)
+    .text("Boiling Point (in degree celsius, correct to the nearest whole number)");
+
+// Add a y-axis label.
+svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text("Solubility");
+
+// Add the year label; the value is set on transition.
+var label = svg.append("text")
+    .attr("class", "year label")
+    .attr("text-anchor", "end")
+    .attr("y", height - 74)
+    .attr("x", width)
+    .text(1);
+
+// Load the data.
+d3.json("cineChemData.json", function(nations) {
+
+  // A bisector since many nation's data is sparsely-defined.
+  var bisect = d3.bisector(function(d) { return d[0]; });
+
+  // Add a dot per nation. Initialize the data at 1800, and set the colors.
+  var dot = svg.append("g")
+      .attr("class", "dots")
+    .selectAll(".dot")
+      .data(interpolateData(1))
+    .enter().append("circle")
+      .attr("class", "dot")
+      .style("fill", function(d) { return colorScale(color(d)); })
+      .call(position)
+      .sort(order);
+
+  // Add a title.
+  dot.append("title")
+      .text(function(d) { return d.name; });
+
+  // Add an overlay for the year label.
+  var box = label.node().getBBox();
+
+  var overlay = svg.append("rect")
+        .attr("class", "overlay")
+        .attr("x", box.x)
+        .attr("y", box.y)
+        .attr("width", box.width)
+        .attr("height", box.height)
+        .on("mouseover", enableInteraction);
+
+  // Start a transition that interpolates the data based on year.
+  svg.transition()
+      .duration(60000)
+      .ease("linear")
+      .tween("year", tweenYear)
+      .each("end", enableInteraction);
+
+	  
+	  // add legend 
+	  
+	  var leg = d3.select("#legend").append("svg")
+									 .attr("width", width)
+									 .attr("height", 210)
+								   .append("g")
+								    .append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 10)
+								        .attr("width", 38)
+								        .attr("height", 18)
+										.style("fill", "#1f77b4");   //  Blue - Low toxicity		
+	  
+	  
+	  
+	  						  d3.select("svg").append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 30)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#2ca02c");   // Green - Mid tox
+										
+		  					d3.select("svg").append("rect")
+									    .attr("x", width - 200)
+										.attr("y", 50)
+								        .attr("width", 38)
+								        .attr("height", 18)
+								        .style("fill", "#ff7f0e");   //  Orange - High tox
+					
+		                     d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 10)
+										.attr("dy", ".99em")
+										.style("text-anchor", "end")
+										.style("fill","black")
+										.style("font-family", "Georgia")
+										.text("Low Toxicity"); 
+										
+										
+		                     d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 30)
+										.attr("dy", ".99em")
+										.style("text-anchor", "end")
+										.style("fill","black")
+										.style("font-family", "Georgia")
+										.text("Medium Toxicity"); 
+		
+		                     d3.select("svg").append("text")
+										.attr("x", width - 208)
+										.attr("y", 50)
+										.attr("dy", ".99em")
+										.style("text-anchor", "end")
+										.style("fill","black")
+										.style("font-family", "Georgia")
+										.text("High Toxicity"); 
+		
+		
+	  
+	  
+  // Positions the dots based on data.
+  function position(dot) {
+    dot .attr("cx", function(d) { return xScale(x(d)); })
+        .attr("cy", function(d) { return yScale(y(d)); })
+        .attr("r", function(d) { return radiusScale(radius(d)); });
+  }
+
+  // Defines a sort order so that the smallest dots are drawn on top.
+  function order(a, b) {
+    return radius(b) - radius(a);
+  }
+
+  // After the transition finishes, you can mouseover to change the year.
+  function enableInteraction() {
+    var yearScale = d3.scale.linear()
+        .domain([1, 6])
+        .range([box.x, box.x+box.width - 10])
+        .clamp(true);
+
+    // Cancel the current transition, if any.
+    svg.transition().duration(0);
+
+    overlay
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout)
+        .on("mousemove", mousemove)
+        .on("touchmove", mousemove);
+
+    function mouseover() {
+      label.classed("active", true);
+    }
+
+    function mouseout() {
+      label.classed("active", false);
+    }
+
+    function mousemove() {
+      displayYear(yearScale.invert(d3.mouse(this)[0]));
+    }
+  }
+
+  // Tweens the entire chart by first tweening the year, and then the data.
+  // For the interpolated data, the dots and label are redrawn.
+  function tweenYear() {
+    var year = d3.interpolateNumber(1, 6);
+    return function(t) { displayYear(year(t)); };
+  }
+
+  // Updates the display to show the specified year.
+  function displayYear(year) {
+    dot.data(interpolateData(year), key).call(position).sort(order);
+    //label.text(Math.round(year));
+    if(Math.round(year) == 1){label.text("Acids");}
+    else if(Math.round(year) == 2){label.text("Bases");}
+    else if(Math.round(year) == 3){label.text("Chlorides");}
+    else if(Math.round(year) == 4){label.text("Nitrates");}
+    else if(Math.round(year) == 5){label.text("Carbonates");}
+    else label.text("Sulfates"); 
+  }
+
+  // Interpolates the dataset for the given (fractional) year.
+  function interpolateData(year) {
+    return nations.map(function(d) {
+      return {
+        name: d.name,
+        toxicity: d.toxicity,
+        meltingpoint: interpolateValues(d.meltingpoint, year),
+        boilingpoint: interpolateValues(d.boilingpoint, year),
+        solubility: interpolateValues(d.solubility, year)
+      };
+    });
+  }
+
+  // Finds (and possibly interpolates) the value for the specified year.
+  function interpolateValues(values, year) {
+    var i = bisect.left(values, year, 0, values.length - 1),
+        a = values[i];
+    if (i > 0) {
+      var b = values[i - 1],
+          t = (year - a[0]) / (b[0] - a[0]);
+      return a[1] * (1 - t) + b[1] * t;
+    }
+    return a[1];
+  }
+});
+
+</script>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+<link rel="stylesheet" href="./css/styles.css" />
+<link rel="stylesheet" href="./knobKnob/knobKnob.css" />
+<link rel="stylesheet" href="./css/jquery-ui.css" />
+
+
+<style type="text/css">
+
+	#header {
+		
+		width: 100%;
+		height: 85px;
+	}
+
+	#motionInfoBar {
+		position: fixed;
+		bottom: 0px;
+		width: 23%;
+		right: 10px;
+		border: 1px solid;
+		border-color:white;
+		border-radius:10px;
+		height: 20%;
+		z-index: 1;
+		
+		
+		padding-left:12px;
+		padding-right:6px;
+		padding-top:12px;
+		padding-bottom:12px;
+		
+		text-align: left;
+		color: white;
+		font-size:15px;
+		font:Calibri;
+	}
+	
+	#alertBar {
+		position: fixed;
+		bottom: 45%;
+		width: 100px;
+		right: 45%;
+		border: 1px solid;
+		border-color:white;
+		border-radius:10px;
+		height: 25px;
+		z-index: 1;
+		
+		
+		padding-left:5px;
+		padding-right:5px;
+		padding-top:5px;
+		padding-bottom:5px;
+		
+		text-align: center;
+		color: white;
+		font-size:10px;
+		font:Calibri;
+	}
+	
+	.detailedInfoBarText {
+	
+		text-align: left;
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-right:10px;
+		margin-left:10px;
+		color: white;
+		font-size:25px;
+		font:Calibri;
+	}
+	
+	#detailedInfoBar {
+		position: fixed;
+		top: 130px;
+		width: 24%;
+		right: 10px;
+		border: 1px solid;
+		border-color:white;
+		height: 38%;
+		z-index: 1;
+		
+	}
+	
+	#tempControl {
+		
+		position: absolute;
+		top: 90px;
+		width: 23%;
+		left: 30px;
+		
+		height: 38%;
+		z-index: 1;
+		
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		-webkit-background-clip: padding-box; /* for Safari */
+		background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+		
+	}
+	
+	#pressureControl {
+		position: absolute;
+		top: 375px;
+		width: 23%;
+		left: 30px;
+		
+		padding-bottom:1px;
+		
+		height: 35%;
+		z-index: 1;
+		
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		-webkit-background-clip: padding-box; /* for Safari */
+		background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+	}
+
+</style>
+
+
+<script src="./jQuery.v1.8.3.js"></script>
+<script src="./jquery-1.7.1.min.js"></script>
+<script src="./js/d3.v2.js"></script>
+<script src="./knobKnob/transform.js"></script>
+<script src="./knobKnob/knobKnob.jquery.js"></script>
+<script src="./js/script.js"></script>
+<script src="./js/jquery-ui.js"></script>
+
+
+
+
+<body onload="javascript:copyToArray()">
+<a href="../UI/UI.html"><img id="header" src="./img/header.jpg"/></a>
+	</br>
+	<center>
+
+		<div class="ui-widget" style="position:absolute;top:100px;right:50px">
+			<label for="tags" style="color: white;font-size:20px;font:Calibri;">Search:</label>
+			<input id="tags" />
+		</div>
+
+		
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="left:0px;top:0px;z-index:0">
+			<g>
+	  		</g>
+		</svg>
+		
+		<img id="beaker" src="./img/beaker.png" width="48%" height="72%" style="opacity:0.45; z-index: -1; position: absolute; top: 110px; left: 360px;"/>
+			
+
+		<div id="tempControl" class="tempControl" style="">
+			
+			<div id="bars" style="position:absolute;top:5px;left:30px">
+				<div id="control"></div>
+			</div>
+			
+			<div id="temperatureBar" style="color:white;font-size:80px;font:Calibri;position:absolute;top:190px;left:40px;"></div>
+			
+		</div>
+		
+		<div id="pressureControl" class="pressureControl" style="">
+			
+			<div id="bars1" style="position:absolute;top:5px;left:30px">
+				<div id="control1"></div>
+			</div>
+			
+			<div id="pressureBar" style="color:white;font-size:60px;font:Calibri;position:absolute;top:190px;left:40px;">
+			100 kPa
+			</div>
+			
+		</div>
+		
+		<div id="detailedInfoBar" style="visibility:hidden">
+			<div id="nameDiv" class="detailedInfoBarText"></div>
+			<div id="molWtDiv" class="detailedInfoBarText"></div>
+			<div id="solubilityDiv" class="detailedInfoBarText"></div>
+			<div id="mpDiv" class="detailedInfoBarText"></div>
+			<div id="bpDiv" class="detailedInfoBarText"></div>
+		</div>
+		
+		<div id="motionInfoBar" style="visibility:hidden">
+			
+			Molecules change phase when the ambient temperature exceeds their threshold temperature. But they do so at different speeds. The speed with which they change phase varies directly with their molecular weight. Hence lighter the molecule the faster they rise (or fall)!
+			
+		</div>
+		
+		<div id="alertBar" style="visibility:hidden">
+			
+			The beaker is full!
+			
+		</div>
+		
+	</center>	
+
+		
+
+<script type="text/javascript">
+
+
+// have molecular wt attribute which would determine the speed of travel i.e. the delay
+// color transition
+// radius change on animation
+// y slope for the  three phases
+
+/*
+
+	Average ascent and descent time for units may be useful in comparative study. 
+
+*/
+
+/*
+
+	For every 5 kPa change in pressure the melting and boiling point change by 20 deg celsius  
+	5 kPa rise --> m.p falls by 20
+	5 kPa rise --> b.p rises by 20
+
+*/
+
+var curTemp = 0;
+var curPressure = 0;
+
+var circleCount = 0;
+
+var legendShown = false;
+
+
+
+
+// selector script here
+
+var availableTags = [];
+$(function() {
+        $("#tags").autocomplete({
+            source: availableTags
+        });
+		$( "#tags" ).on( "autocompleteselect", function( event, ui ) {drawCircles(nameArr.indexOf(ui.item.value));} );
+		$( "#tags" ).on( "autocompleteclose", function( event, ui ) {this.value='';} );
+    });
+
+
+
+
+
+
+var phaseData = [{"id":0,"name":'Hydrochloric Acid',"molwt":700,"solubility":800,"meltingpoint":-18,"boilingpoint":103,"x":480,"y":320,"state":2,"formula":"HCl"},
+                 {"id":1,"name":'Sulfuric Acid',"molwt":300,"solubility":900,"meltingpoint":10,"boilingpoint":337,"x":560,"y":320,"state":2,"formula":"H2SO4"},
+                 {"id":2,"name":'Hydrobromic Acid',"molwt":480,"solubility":300,"meltingpoint":-11,"boilingpoint":112,"x":625,"y":320,"state":2,"formula":"HBr"},
+                 {"id":3,"name":'Sodium Chloride',"molwt":530,"solubility":360,"meltingpoint":801,"boilingpoint":1413,"x":635,"y":460,"state":1,"formula":"NaCl"},
+                 {"id":4,"name":'Sodium Carbonate',"molwt":1000,"solubility":215,"meltingpoint":755,"boilingpoint":1390,"x":660,"y":460,"state":1,"formula":"Na2CO3"},
+                 {"id":5,"name":'Sodium Nitrate',"molwt":100,"solubility":912,"meltingpoint":308,"boilingpoint":380,"x":720,"y":460,"state":1,"formula":"NaNO3"}
+                 ,{"id":6,"name":'Hydrofluoric Acid',"molwt":190,"solubility":600,"meltingpoint":-84,"boilingpoint":19,"x":800,"y":160,"state":3,"formula":"HF"},
+                 {"id":7,"name":'Sodium Hydroxide',"molwt":900,"solubility":1110,"meltingpoint":318,"boilingpoint":1388,"x":820,"y":460,"state":1,"formula":"NaOH"},
+                 {"id":8,"name":'Potassium Hydroxide',"molwt":390,"solubility":970,"meltingpoint":406,"boilingpoint":1327,"x":900,"y":460,"state":1,"formula":"KOH"},
+                 {"id":9,"name":'Calcium Hydroxide',"molwt":600,"solubility":425,"meltingpoint":580,"boilingpoint":600,"x":720,"y":460,"state":1,"formula":"Ca(OH)2"},
+                 {"id":10,"name":'Ammonium Hydroxide',"molwt":500,"solubility":1200,"meltingpoint":-58,"boilingpoint":38,"x":730,"y":320,"state":2,"formula":"NH4(OH)"},
+                 {"id":11,"name":'Lithium Hydroxide',"molwt":700,"solubility":1179,"meltingpoint":264,"boilingpoint":924,"x":740,"y":460,"state":1,"formula":"LiOH"},
+                 {"id":12,"name":'Lithium Carbonate',"molwt":300,"solubility":213,"meltingpoint":723,"boilingpoint":1318,"x":820,"y":460,"state":1,"formula":"Li2CO3"},
+                 {"id":13,"name":'Calcium Sulfate',"molwt":400,"solubility":310,"meltingpoint":450,"boilingpoint":1300,"x":500,"y":460,"state":1,"formula":"CaSO4"},
+                 {"id":14,"name":'Potassium Sulfate',"molwt":600,"solubility":447,"meltingpoint":884,"boilingpoint":1429,"x":550,"y":460,"state":1,"formula":"K2SO4"},
+                 {"id":15,"name":'Sodium Sulfate',"molwt":700,"solubility":220,"meltingpoint":1069,"boilingpoint":1389,"x":610,"y":460,"state":1,"formula":"Na2SO4"},
+                 {"id":16,"name":'Sodium Nitrite',"molwt":700,"solubility":312,"meltingpoint":271,"boilingpoint":290,"x":690,"y":460,"state":1,"formula":"NaNO2"},
+                 {"id":17,"name":'Silver Nitrate',"molwt":650,"solubility":260,"meltingpoint":224,"boilingpoint":1464,"x":800,"y":460,"state":1,"formula":"AgNO3"},
+                 {"id":18,"name":'Calcium Nitrate',"molwt":450,"solubility":1112,"meltingpoint":13,"boilingpoint":132,"x":530,"y":320,"state":2,"formula":"NaOH"},
+                 {"id":19,"name":'Calcium Chloride',"molwt":320,"solubility":740,"meltingpoint":788,"boilingpoint":1490,"x":615,"y":460,"state":1,"formula":"CaCl2"}];
+
+
+//var phaseData = [{"id":0,"name":'Hydrochloric Acid',"solubility":900,"meltingpoint":-18,"boilingpoint":103,"x":100,"y":200}]
+
+for(i=0;i<phaseData.length;i++){
+	
+	availableTags.push(phaseData[i].name);
+}
+
+var id = new Array();
+var nameArr = new Array();
+var solubility = new Array();
+var mp = new Array();
+var bp = new Array();
+var mpc = new Array();
+var bpc = new Array();
+var xPos = new Array();
+var yPos = new Array();
+var molwt = new Array();
+var state = new Array();
+
+
+
+function showDetailedInfo(name,molwt,solubility,mp,bp,mpc,bpc){
+	
+	document.getElementById("nameDiv").innerHTML = "Name: <font color='#989898'>"+name+"</font>";
+	document.getElementById("molWtDiv").innerHTML = "Molecular Wt: <font color='#989898'>"+molwt+" amu</font>";
+	document.getElementById("solubilityDiv").innerHTML = "Solubility: <font color='#989898'>"+solubility+" gm/Lt</font>";
+	if(mp == mpc){
+		document.getElementById("mpDiv").innerHTML = "Melting Pt: <font color='#989898'>"+mp+"&degc</font>";
+	}
+	else{
+		document.getElementById("mpDiv").innerHTML = "Melting Pt: <font color='#989898'>"+mpc+"&degc<sup>*</sup></font>";
+	}
+	if(bp == bpc){
+		document.getElementById("bpDiv").innerHTML = "Boiling Pt: <font color='#989898'>"+bp+"&degc</font>";	
+	}
+	else{
+		document.getElementById("bpDiv").innerHTML = "Boiling Pt: <font color='#989898'>"+bpc+"&degc<sup>*</sup><small>("+bp+"&degc)</small></font>";	
+	}
+		
+	
+}
+
+function changeBorderToWhite(id){
+	
+	element = document.getElementById(id);
+	element.setAttribute("style","opacity:1.0;z-index:-10");
+	element.setAttribute("stroke","white");
+	
+	document.getElementById("detailedInfoBar").style.visibility = "visible";
+	showDetailedInfo(nameArr[id],molwt[id],solubility[id],mp[id],bp[id],mpc[id],bpc[id]);
+	
+}
+
+function changeBorderToBlack(id){
+	
+	element = document.getElementById(id);
+	element.setAttribute("style","opacity:0.7;z-index:1");
+	element.setAttribute("stroke","black");
+	
+	document.getElementById("detailedInfoBar").style.visibility = "hidden";
+	
+}
+
+function copyToArray(){
+
+	for(i=0; i<phaseData.length; i++){
+
+		id[i] = phaseData[i].id;
+		molwt[i] = Number(phaseData[i].molwt);
+		nameArr[i] = ""+phaseData[i].name;
+		solubility[i] = phaseData[i].solubility / 20;
+		mp[i] = phaseData[i].meltingpoint;
+		bp[i] = phaseData[i].boilingpoint;
+		mpc[i] = mp[i];//Math.round(mp[i] - ((curPressure - 100)/10 * 2));
+		bpc[i] = Math.round(bp[i] + ((curPressure - 100)/5 * 5)); //bp[i];
+		xPos[i] = phaseData[i].x;
+		yPos[i] = phaseData[i].y;
+		state[i] = phaseData[i].state;
+		
+		//break;
+
+	}
+
+
+}
+
+function drawCircles(i){
+
+	//copyToArray();
+	
+	if(circleCount >= 10){
+	//alert(1234);
+		
+		document.getElementById("alertBar").style.visibility = "visible";
+		$("#alertBar").fadeIn(100,"linear");
+		$("#alertBar").fadeOut(1500,"linear");
+		return;
+	}
+	circleCount++;
+		
+	var gElement = document.getElementsByTagName("g")[0];
+
+	
+
+		var circleElement = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		var textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+		
+		var textNode = document.createTextNode(phaseData[i].formula);
+		
+		
+		circleElement.setAttribute("id",id[i]);
+		circleElement.setAttribute("name",phaseData[i].name);
+		circleElement.setAttribute("title",phaseData[i].name);
+		circleElement.setAttribute("fill",setColor(state[i]));
+		circleElement.setAttribute("style","z-index:1;opacity:0.7");
+		circleElement.setAttribute("stroke","black");
+		circleElement.setAttribute("stroke-width","2");
+		circleElement.setAttribute("onmouseover", "javascript:changeBorderToWhite("+id[i]+");");
+		circleElement.setAttribute("onmouseout", "javascript:changeBorderToBlack("+id[i]+");");
+		circleElement.setAttribute("cx",xPos[i]);
+		circleElement.setAttribute("cy",yPos[i]);
+		circleElement.setAttribute("r",solubility[i]);
+		
+		
+	
+		textElement.setAttribute("x",xPos[i]- (solubility[i]/20) - 10);
+		textElement.setAttribute("y",yPos[i]);
+		textElement.setAttribute("font-size",10);
+		textElement.setAttribute("fill","white");
+	
+        textElement.appendChild(textNode);
+		
+		
+		gElement.appendChild(circleElement);
+		gElement.appendChild(textElement);
+		updateSlider(curTemp);
+	
+}	
+
+function animate(element,text,y1,y2,state,speed){
+	
+	function frame() {
+    	   
+		if(y1 > y2){
+			$(element).fadeOut("fast","swing");
+			y1 = Number(y1) - 15; 
+			//$(element).fadeIn("fast","linear");
+			text.setAttribute("y",y1);
+			element.setAttribute("cy",y1);
+						
+			if (y1 <= y2){  // check finish condition
+	      		element.setAttribute("fill",setColor(state));
+				//$(element).stop(true,false);
+	      		clearInterval(id)
+	      	}	
+	    }
+	    else{
+			$(element).fadeOut("fast","swing");
+	    	y1 = Number(y1) + 15;
+			//$(element).fadeIn("slow","linear");
+			text.setAttribute("y",y1);
+	    	element.setAttribute("cy",y1); 	
+			$(element).animate({svgOpacity: 0.0},100);
+	    	if (y1 >= y2){  // check finish condition
+	      		element.setAttribute("fill",setColor(state));
+	      		//$(element).stop(true,false);
+				clearInterval(id)
+				
+	      	}
+	    }  
+	    
+  	}
+
+  	var id = setInterval(frame, speed) // draw every 10ms
+
+}
+
+function setColor(state){
+
+	if(state == 1)
+		return "rgb(209,18,80)";
+	else if(state == 2)
+		return "rgb(0,143,104)";
+	else
+		return "rgb(0,104,153)";
+
+}
+
+
+function showTemperature(temperatureLimit){
+
+	var display = document.getElementById("chosen");
+	display.innerHTML=temperatureLimit;
+
+}
+
+function updateSlider(temperatureLimit) {
+
+	// each section has one color assignd to the circles
+	// on transition color changes - check bounds
+	
+	if(legendShown == false){
+				legendShown = true;
+				$("#motionInfoBar").css("visibility","visible");
+				$("#motionInfoBar").animate({bottom:"110px"},4000,"linear");
+				$("#motionInfoBar").fadeOut(17000,"linear");
+	}
+	
+	
+	var circleElementArray = document.getElementsByTagName("circle");
+	var textElementArray = document.getElementsByTagName("text");
+	
+	for(i=0; i<circleElementArray.length;i++){
+
+		circleElement = circleElementArray[i];
+		textElement = textElementArray[i];
+		
+		var idOfCircleElement = Number(circleElement.getAttribute("id"));
+		var cxDefaultOfCircleElement = Number(xPos[idOfCircleElement]);
+		var cyDefaultOfCircleElement = Number(yPos[idOfCircleElement]);
+			
+		mpOfCircleElement = mpc[idOfCircleElement];
+		bpOfCircleElement = bpc[idOfCircleElement];
+		
+		var speed = Number(molwt[idOfCircleElement]);
+
+		var curYOfCircleElement = circleElement.getAttribute("cy");
+		
+		if(temperatureLimit < mpOfCircleElement){
+			endYOfCircleElement = 460;
+			if(curYOfCircleElement != endYOfCircleElement)
+			animate(circleElement,textElement,curYOfCircleElement,endYOfCircleElement,1,speed)
+		}
+
+		if(temperatureLimit > mpOfCircleElement && temperatureLimit < bpOfCircleElement){
+			endYOfCircleElement = 320;
+			if(curYOfCircleElement != endYOfCircleElement)
+			animate(circleElement,textElement,curYOfCircleElement,endYOfCircleElement,2,speed,idOfCircleElement);
+		}
+		if(temperatureLimit > bpOfCircleElement){
+			endYOfCircleElement = 160;
+			if(curYOfCircleElement != endYOfCircleElement)
+			animate(circleElement,textElement,curYOfCircleElement,endYOfCircleElement,3,speed,idOfCircleElement)
+		}
+		
+	}
+	
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>
+

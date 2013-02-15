@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 1300px;
+}
+pre {font-size:15px;
+display:inline;
+font-weight:900;
+color:#FFF;
+position: absolute;
+ right: 350px;
+  top: 500px;}
+  form {
+position: absolute;
+  right: 200px;
+  top: 50px;}
+#bodyContent {
+display:none;
+height: 100%;
+}
+button {
+   position: absolute;
+  right: 300px;
+  top: 575px;
+}
+
+.box {
+  font: 10px sans-serif;
+  fill: white;
+}
+
+.box line,
+.box rect,
+.box circle {
+ fill: #CC3;
+  stroke: #099;
+  stroke-width: 2px;
+}
+
+.box .center {
+  stroke-dasharray: 3,3;
+}
+
+.box .outlier {
+  fill: none;
+  stroke: #ccc;
+}
+
+</style>
+
+
+<body background="bg_linen.jpg">
+<FORM>
+ 
+  <INPUT TYPE="radio" NAME="buttons1" onclick="leapTo('./mp.html')">
+  <FONT COLOR="#CCFFFF"><B>Melting Point</B></FONT>
+     </br>
+  <INPUT TYPE="radio" NAME="buttons1" onclick="leapTo('./bp.html')">
+  <FONT COLOR="#CCFFFF"><B>Boiling Point</B></FONT>
+    </br>
+  <INPUT TYPE="radio" NAME="buttons1" onclick="leapTo('./freep.html')">
+  <FONT COLOR="#CCFFFF"><B>Freezing Point</B></FONT>
+  </br>
+  <INPUT TYPE="radio" NAME="buttons1" onclick="leapTo('./flasp.html')">
+  <FONT COLOR="#CCFFFF"><B>Flash Point</B></FONT>
+   </br>
+  <INPUT TYPE="radio" NAME="buttons1" onclick="leapTo('./sol.html')">
+  <FONT COLOR="#CCFFFF"><B>Solubility</B></FONT>
+  </br>
+  <INPUT TYPE="radio" NAME="buttons1" checked>
+  <FONT COLOR="#CCFFFF"><B>Toxicity</B></FONT>
+</FORM>
+
+<div id="bodyContent">
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="box.js"></script>
+<script src="jquery-1.5.2.js"></script>
+<script> 
+$(document).ready(function(){
+$('#bodyContent').fadeIn("slow","linear");
+});
+</script>
+<script>
+
+var margin = {top: 10, right: 50, bottom: 20, left: 50},
+    width = 120 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var min = Infinity,
+    max = -Infinity;
+
+var chart = d3.box()
+    .whiskers(iqr(1.5))
+    .width(width)
+    .height(height);
+
+d3.csv("./tox.csv", function(error, csv) {
+  var data = [];
+
+  csv.forEach(function(x) {
+    var e = Math.floor(x.Expt - 1),
+        r = Math.floor(x.Run - 1),
+        s = Math.floor(x.Speed),
+        d = data[e];
+    if (!d) d = data[e] = [s];
+    else d.push(s);
+    if (s > max) max = s;
+    if (s < min) min = s;
+  });
+
+  chart.domain([min, max]);
+
+  var svg = d3.select("#bodyContent").selectAll("svg")
+      .data(data)
+    .enter().append("svg")
+      .attr("class", "box")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.bottom + margin.top)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .call(chart);
+
+  d3.select("button").on("click", function() {
+leapTo("../Trellis.html");  });
+});
+
+function randomize(d) {
+  if (!d.randomizer) d.randomizer = randomizer(d);
+  return d.map(d.randomizer);
+}
+
+function randomizer(d) {
+  var k = d3.max(d) * .02;
+  return function(d) {
+    return Math.max(min, Math.min(max, d + k * (Math.random() - .5)));
+  };
+}
+
+// Returns a function to compute the interquartile range.
+function iqr(k) {
+  return function(d, i) {
+    var q1 = d.quartiles[0],
+        q3 = d.quartiles[2],
+        iqr = (q3 - q1) * k,
+        i = -1,
+        j = d.length;
+    while (d[++i] < q1 - iqr);
+    while (d[--j] > q3 + iqr);
+    return [i, j];
+  };
+}
+
+</script>
+<SCRIPT>
+<!--  Activate Cloaking Device
+//***************************************************************************
+//
+//                              Radio Button LeapTo I
+//
+//                 by Tim Wallace   (timothy@essex1.com)
+//
+//           Uses radio buttons in place of a drop-down menu.
+//
+//***************************************************************************
+// Called by an onClick in each radio button.
+function leapTo (link)
+   {
+   var new_url=link;
+   if (  (new_url != "")  &&  (new_url != null)  )
+      window.location=new_url;
+   else
+      alert("\nYou must make a selection.");
+   }
+// Called by View Source button - displays source of file.
+function viewSource()
+   {
+   var current_url="";
+   current_url=document.location;
+   window.location="view-source:"+current_url;
+   }
+// Called by Full Window button - loads file to full window for easy saving.
+//function WinOpen() 
+  // {
+  
+   //window.open("./index.html","DisplayWindow","menubar=yes,scrollbars=yes");
+   //window.open("./index.html","DisplayWindow","menubar=yes,scrollbars=yes");   // double for Macs
+   //}
+// Deactivate Cloaking -->
+</SCRIPT>
+</div>
+<button>Trellis View</button>
+<pre>   Nitrites    Hydroxides      Acids      Chlorides     Sulphates     Nitrates    Carbonates    Sulphites</pre>
+</br>
+</body>
